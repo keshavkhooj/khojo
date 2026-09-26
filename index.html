@@ -484,17 +484,28 @@
 
     addHistory(text);
 
-    // Fake AI response
-    setTimeout(() => {
-
-      const response =
-        "I'm Khojo, your AI assistant. You asked:\n\n" +
-        text +
-        "\n\nConnect an AI API to make me generate real answers.";
-
-      addMessage(response, "ai");
-
-    }, 700);
+   // Send message to Khojo backend
+fetch("https://khojo-backend.vercel.app/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    message: text
+  })
+})
+.then(response => response.json())
+.then(data => {
+  if (data.answer) {
+    addMessage(data.answer, "ai");
+  } else {
+    addMessage("Sorry, I couldn't get an answer.", "ai");
+  }
+})
+.catch(error => {
+  console.error(error);
+  addMessage("Sorry, something went wrong connecting to Khojo.", "ai");
+});
 
   }
 
