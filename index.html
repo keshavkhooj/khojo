@@ -682,6 +682,32 @@ fetch("https://khojo-backend.vercel.app/chat", {
   }
 
 </script>
+<script type="module">
+  import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+
+  async function loadAI() {
+    try {
+      console.log("Loading Khojo AI...");
+
+      const engine = await webllm.CreateMLCEngine(
+        "Llama-3.2-1B-Instruct-q4f16_1-MLC",
+        {
+          initProgressCallback: (progress) => {
+            console.log(progress.text);
+          }
+        }
+      );
+
+      window.khojoEngine = engine;
+
+      console.log("Khojo AI is ready!");
+    } catch (error) {
+      console.error("Khojo AI failed to load:", error);
+    }
+  }
+
+  loadAI();
+</script>
 
 </body>
 </html>
