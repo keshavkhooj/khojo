@@ -470,20 +470,49 @@
 
   /* ---------- SEND MESSAGE ---------- */
 
-  function sendMessage() {
+  async function sendMessage() {
 
-    const text = promptBox.value.trim();
+  const text = promptBox.value.trim();
 
-    if (!text) return;
+  if (!text) return;
 
-    welcome.style.display = "none";
+  welcome.style.display = "none";
 
-    addMessage(text, "user");
+  addMessage(text, "user");
 
-    promptBox.value = "";
+  promptBox.value = "";
 
-    addHistory(text);
+  addHistory(text);
 
+  const engine = window.khojoEngine;
+
+  if (!engine) {
+    addMessage("Khojo is still loading its AI. Please wait a moment.", "ai");
+    return;
+  }
+
+  try {
+    const response = await engine.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are Khojo, a helpful AI assistant. Give clear and accurate answers."
+        },
+        {
+          role: "user",
+          content: text
+        }
+      ]
+    });
+
+    addMessage(response.choices[0].message.content, "ai");
+
+  } catch (error) {
+    console.error(error);
+    addMessage("Sorry, Khojo couldn't generate an answer.", "ai");
+  }
+
+}
    
 
   /* ---------- ADD MESSAGE ---------- */
